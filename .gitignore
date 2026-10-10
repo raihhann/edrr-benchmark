@@ -1,0 +1,29 @@
+# LaTeX Core Auxiliary and Build Files
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.xdv
+
+# Glossaries and Nomenclature Files
+*.acn
+*.acr
+*.alg
+*.glg
+*.glo
+*.gls
+*.ist
+
+# List of Figures and List of Tables
+*.lof
+*.lot
+
+# Compiled PDF (Uncomment the line below if you prefer not to track the built PDF in git)
+# *.pdf

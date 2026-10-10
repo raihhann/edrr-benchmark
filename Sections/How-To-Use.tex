@@ -1,0 +1,129 @@
+\section{Literature Work}
+
+This template is intended to be simple yet versatile. You may use this template as is, or as a starting point for developing your more personalized template. It is divided into three main parts: frontmatter, mainmatter, backmatter. The frontpage is currently a placeholder, and the word-template front page should be used instead for any submissions to \acrshort{ias}.
+
+\subsection{Frontmatter}
+The frontmatter is quite straight forward, it deals with all the formal parts of a formal document.  It starts with abstract(s), preface, and a table of contents. But also includes list of figures, list of tables, nomaclature and abbreviations. You may also have noticed that there are intermittent blank pages in the frontmatter, they are here so that if the document is printed double-sided and bound (which may be the case for master's and bachelor's thesis). Then, abstract(s), preface, and table of contents are on the right hand side once the previous page has been turned. These blank pages should be removed for versions not intended for printing. All the content such as figures, tables, sections, etc., are automatically added to the front matter if implemented correctly.
+
+\subsection{Mainmatter}
+
+Mainmatter is unsurprisingly, the main part of your thesis and will constitute the majority of your content. You may choose to write directly into the main.tex file, or import section-by-section like it is done in this template, or even subsection and subsubsections. The important thing is that you organize, and organize in a way that feels natural for you. 
+
+Bellow follows the use of some packages used in this template. However, overleaf has guides on most available packages, please consult them as needed.
+
+\subsubsection{Citations}
+This \LaTeX-template uses Biblatex for reference management and citations. A reference list is automatically generated based on the works cited in your document as long as they are added in your references.bib file correctly. Currently, this template uses author-year citations, and follows the Harvard reference style. You may configure the referencing how you like, but you should strive be consistent with an established style.
+
+Citations are used to acknowledge the source of information or ideas within the body of your writing. The Harvard style requires the author's name and the publication date to be included in the in-text citation. Here follows some examples of referencing using the Harvard referencing style:
+\begin{itemize}
+    \item If the author's name is mentioned in the sentence, only the publication date needs to be included in the citation. Example: According to \textcite{Rausand:2014}...
+    \item If the author's name is not mentioned in the sentence, both the author's name and publication date need to be included in the citation. Example: ...\parencite{Rausand:2014}.
+    \item If the source has multiple authors, list all the authors' names in the citation, up to three authors. For sources with more than three authors, list the first author's name followed by "et al." Example: ... \parencite{Rausand:Høyland:2004} or ...\parencite{Robles:2012}.
+    \item If the source is a direct quote, use quotation marks and include the page number in the citation. Example: "Systematic faults can be introduced in all the life cycle phases of an item." \parencite[67]{Rausand:2014}.
+    \item If you are citing a direct quote that is longer than three lines, the Harvard style requires you to use a block quote format. In this case do not use quotation marks.
+    \begin{quote}   
+        The three subsystems must act in concert to detect the deviation (i.e., demand) and bring the EUC into a \textit{safe state}. In brief, a SIS shall \textit{detect}, \textit{react}, and \textit{avert}. A sketch of a simple SIS that is used for the pressure protection of a pipeline is shown in Figure 1.4. Three pressure transmitters monitor the pressure in the pipeline and send this information to the logic solver subsystem. \parencite[9--10]{Rausand:Høyland:2004}
+    \end{quote}
+    \item Secondary referencing is when your reference cites an other reference that you cannot find, access, or is in a foreign language, such that you cannot directly cite the reference of origin. Only your reference should then appear in the reference list.  Example: ""The reliability of an item is defined as 'the ability of the item to perform a required function, under given environmental and operational conditions and for a stated period of time'."" \parencite[Rausand and Høyland, 2004, as cited in][2]{Rausand:2014}
+    \item If your quote contains an other quote, use double quotation marks for your quotation, and single inside, like in the above example. 
+\end{itemize}
+
+For a more comprehensive guide to the Harvard referencing style, or other referencing styles please consult the book \textcite{Pears:Shields:2010} or the website \textcite{cite_them_right}.
+
+\subsubsection{Math}
+
+For math, a number of packages from American Mathematical Society is used in this template. The math packages can  be used in text, like so: $x^{2} + x - 2 = 0$ or as stand alone math equations. Equation \ref{eq: quadratic formula}, \ref{eq: random example}, and \ref{eq:Turbulent_Haaland} shows how an equation can be written, labelled and referenced. For more examples, please consult the ansmath documentation. see formula \ref{eq: quadratic formula}.
+
+\begin{equation}
+    x = \frac{-\ b \  \pm \ \sqrt{b^{2} \ - \ 4ac}}{2a}
+    \label{eq: quadratic formula}
+\end{equation}
+
+\begin{equation}
+    \label{eq: random example}
+    f(x) =
+    \begin{cases}
+       x^{2} + c & \text{for $x \leq 5$}\\
+       x^{3} + \frac{c}{x}& \text{for $x > 5$}\\
+    \end{cases}       
+\end{equation}
+
+\begin{equation}
+    \label{eq:Turbulent_Haaland}
+    \frac{1}{\sqrt{\lambda}} = - \frac{1.8}{n} log\left[\left(\frac{6.9}{Re}\right)^{n} + \left(\frac{\epsilon}{3.75\,d}\right)^{1.11\,n}\right]  \qquad \text{for $4000 < Re$}
+\end{equation}
+
+
+Here equation \ref{eq:Turbulent_Haaland} is the Haaland Equation \parencite{Haaland:1983}, where: $\lambda =$ Darcy–Weisbach friction factor. $Re =$ Reynold's number. $n$ = Parameter used to adjust the transition from smooth and rough pipe regimes. $\epsilon$ = Surface roughness. $d$ = Internal pipe diameter.
+
+\subsubsection{Abbreviations and Nomenclature}
+
+Abbreviations and nomenclature is handled similarly to the references. Abbreviations are added in the abbreviation-file, while nomenclature is added in the nomenclature-file.
+Once a acronym or nomenclature word is used in the text, it is added to the respective lists. Here is an example on how to use them.
+
+\begin{itemize}
+    \item \acrshort{ias} is one of 15 \glspl{institute} in the faculty for Computer Science, Electrical Engineering and Information Technology.  
+\end{itemize}
+
+
+
+\subsubsection{Figures}
+
+Figures and images are added using the figure environment. An important considerations with figures are the intellectual property rights, specifically the copy right. Finding figures or images on the internet and simply putting them in your document is not acceptable. They need to be properly referenced and any license should also be clearly stated and adhered too.  
+
+Generally, to use someones intellectual property for the purposes of scholarship or education is considered fair use, provided the work is only being used to the extent necessary. However, if you are unsure, an option is to derivatively recreate the figure in a different style, or add or remove content. Derivative work is generally considered independent work. I highly recommend making the style of figures, plots, tables, etc., consistent throughout your document, but remember you need to state the figure has been derived and provide the source. An example is shown in figure \ref{fig: Three Mile Island} where the license explicitly states that a term for use, is a link to the license.  
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth]{Images/Three_Mile_Island_2012-04-21.jpg}
+    \caption[Three Mile Island]{Three Mile Island \parencite{Johnson:2012:Three_Mile_Island}, \href{https://creativecommons.org/licenses/by-sa/2.0/deed.en}{cc-by-sa-2.0}}
+    \label{fig: Three Mile Island}
+\end{figure}
+
+
+\subsubsection{Tables}
+
+Tables has multiple uses and may be a useful way to summarize and highlight and results in your document. Keep in mind tables need both a caption, and a label if you wish for the table to be reference-able and automatically appear in the list of tables. Overleaf and the internet has a number of examples on latex tables, find one style you like and keep it consistent throughout the document. An example table is shown in \ref{table:example table}
+
+\begin{table}[!ht] % Prefers placement here; allows top as fallback.
+\centering  % Centers the table
+\begin{tabular}{|c c c c|} % defines vertical components of the table
+ \hline % horizontal component of the table
+ Col1 & Col2 & Col2 & Col3 \\ [0.5ex] % First Row of table,
+ \hline\hline % Two horizontal lines
+ 1 & 6 & 87837 & 787 \\ % Second row of table
+ 2 & 7 & 78 & 5415 \\
+ 3 & 545 & 778 & 7507 \\
+ 4 & 545 & 18744 & 7560 \\
+ 5 & 88 & 788 & 6344 \\ [1ex] 
+ \hline  % bottom horizontal line
+\end{tabular}
+\caption{Table to test captions and labels.} % caption, what goes here also goes in the list of tables
+\label{table:example table} % label so you can reference the table in text.
+\end{table}
+
+\subsubsection{Algorithms and Pseudo-code}
+
+Often it can be nice to explain your code or a concept with an algorithm or pseudo code either in the main thesis or in the appendix. For this, you can use the algpseudocode and algorithm package to create nice looking algorithms
+
+\begin{algorithm}
+\caption{How to get dizzy}\label{alg:dizzy}
+\begin{algorithmic}
+\Require $V$: the set of vertices representing the person
+\Require $\theta$: the angle of rotation in degrees
+\Ensure $V'$: the set of vertices representing the rotated person
+
+\State Convert $\theta$ from degrees to radians: $\theta \gets \theta * \frac{\pi}{180}$
+\State Calculate the rotation matrix: $R \gets \begin{bmatrix} \cos(\theta) & 0 & \sin(\theta) \ 0 & 1 & 0 \ -\sin(\theta) & 0 & \cos(\theta) \end{bmatrix}$
+
+\ForAll{$v \in V$}
+\State Convert $v$ to a column vector: $v \gets \begin{bmatrix} v_x \ v_y \ v_z \end{bmatrix}$
+\State Translate the vertex to the origin: $v \gets v - \begin{bmatrix} 0 \ c_y \ 0 \end{bmatrix}$, where $c_y$ is the y-coordinate of the person's center of mass
+\State Calculate the rotated vertex: $v' \gets Rv$
+\State Translate the vertex back to its original position: $v' \gets v' + \begin{bmatrix} 0 \ c_y \ 0 \end{bmatrix}$
+\State Replace $v$ in $V$ with $v'$: $V[V.index(v)] \gets v'$
+\EndFor
+
+\State \Return $V'$
+\end{algorithmic}
+\end{algorithm}

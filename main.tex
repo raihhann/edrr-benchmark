@@ -1,0 +1,100 @@
+
+\documentclass{article}
+
+% Importing document settings from our file "packages.sty"
+\usepackage{float}
+\usepackage{subcaption} % Required for subfigure
+\usepackage{packages}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{colorbrewer}
+\usepackage{tikz}
+\usepackage{amsmath,amssymb}
+\usetikzlibrary{positioning, calc, fit, arrows.meta, backgrounds}
+\usepackage{xcolor}
+\definecolor{amber}{rgb}{1.0, 0.75, 0.0}
+\definecolor{emerald}{rgb}{0.31, 0.78, 0.47}
+
+% CRITICAL libraries for the diagram to render error-free:
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, backgrounds, fit}
+\begin{document}
+
+% Beginning of document
+
+% Inserting title page
+\import{./}{title}
+% \blankpage
+
+% Frontmatter
+\frontmatter
+\input{Frontmatter/abstract}
+\addcontentsline{toc}{section}{Abstract} % Adds the section to the table of content
+\newpage\blankpage % Adds a black page, if you want to print double-sided to a book, this makes sure that the next page is on the right hand side. Common for abstracts, prefaces, and table of contents, etc. Consider Removing theese for any digital version not meant to be printed!
+\input{Frontmatter/abstract_deutsch}
+\addcontentsline{toc}{section}{Zusammenfassung}
+\newpage\blankpage
+\input{Frontmatter/preface}
+\addcontentsline{toc}{section}{Preface}
+\newpage\blankpage
+% \input{Frontmatter/acknowledgements}
+% \addcontentsline{toc}{section}{Acknowledgements}
+% \newpage\blankpage
+% Inserting table of contents
+\tableofcontents
+\newpage
+% Inserting list of figures
+\listoffigures
+\newpage
+% Inserting list of tables
+\listoftables
+\newpage
+% Inserting glossary
+\printglossary[type=main,style=altlist, nonumberlist, title={Nomenclature}]
+\newpage
+% Inserting abbreviations
+\printglossary[type=\acronymtype, style=list, nonumberlist, title={Abbreviations}]
+
+% Main Matter
+\mainmatter
+
+% Introduction explaining this LaTeX-template
+\import{./Sections/}{Introduction}
+
+\import{./Sections/}{Literature-Work}
+
+\import{./Sections/}{Methodology}
+
+\import{./Sections/}{Experimental Setup}
+
+\import{./Sections/}{Results and Analysis} 
+
+\import{./Sections/}{Discussion and Limitations}
+
+\import{./Sections/}{Conclusion}
+
+% Example section added from an external tex-file, here located in ./Sections/
+% \import{./Sections/}{How-To-Use}
+
+% Tips
+% \import{./Sections/}{Tips}
+
+
+% Back Matter
+% Printing bibliography
+\newpage
+% \printbibliography[heading = bibintoc, title = Bibliography]    % 'bibintoc' inserts our bibliography into the table of contents
+
+% Inserting appendix with separate settings
+% \addappendix
+% \import{./Appendices/}{example_appendix}
+
+\input{Frontmatter/declaration}
+
+% End of document
+\end{document}
