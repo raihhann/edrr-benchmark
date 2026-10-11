@@ -1,0 +1,12 @@
+# Local project environment
+rosenv/
+
+# Generated ROS bag data
+Bags/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# VS Code / editor files
+.vscode/
