@@ -177,7 +177,7 @@ if __name__ == "__main__":
             time.sleep(1)
             
     except KeyboardInterrupt:
-        print("\n[INFO] Stopping capture... waiting 2 seconds for final buffer flush.")
+        print("\n[INFO] Stopping capture... waiting 5 seconds for final buffer flush.")
         time.sleep(5)  # Allow any last messages to be processed
         recorder.stop()
     finally:
