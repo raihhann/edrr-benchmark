@@ -11,3 +11,5 @@ This project explores embodiment-aware risk assessment by:
 * Recording controlled scenario families, such as blind corners and edge cases, where changing only the robot embodiment creates a drastic difference in risk.
 * Providing independently reviewed ground-truth risk labels justified by physical embodiment properties rather than intuition.
 * Benchmarking vision-language models on how well they adapt to changes in robot embodiment and environmental context.
+
+See other branches for more files
