@@ -12,6 +12,12 @@ nohup roslaunch go1_camera cameras_14.launch > /tmp/14_cameras.log 2>&1 &
 echo "Waiting for native cameras to register..."
 while ! rostopic list 2>/dev/null | grep -q "/camera/left/image"; do sleep 1; done
 
+echo "Starting compressed camera publishers..."
+if ! bash "$HOME/go1_sync_tools/restart_compression.sh"; then
+    echo "Compression startup failed; inspect ~/go1_sync_tools/*.log" >&2
+    exit 1
+fi
+
 read -p "Do you want to launch the Intel RealSense camera? (y/n): " choice
 case "$choice" in 
   y|Y ) 

@@ -1,6 +1,9 @@
 #!/bin/bash
 echo "Stopping ROS Data Collection Nodes..."
 
+# Stop only the additive JPEG processes managed by our startup helper.
+pkill -f '^/home/unitree/go1_sync_tools/jpeg_republisher ' 2>/dev/null || true
+
 # Kill only our custom launch processes and bridge (Leaves roscore alive)
 pkill -f roslaunch
 pkill -f rosbridge
