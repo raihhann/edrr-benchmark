@@ -1,4 +1,24 @@
 \section{Conception}
+\label{sec:conception}
 
+This chapter outlines the theoretical and experimental framework developed to evaluate embodiment-dependent risk assessment. Translating the requirements established in Chapter 1 into a concrete methodology, this chapter defines the core scenario families, characterizes the selected robot embodiments, and establishes the ground-truth annotation strategy. Furthermore, it details the formulation of the benchmark criteria necessary to quantify how effectively risk assessment models adapt to changes in a robot's physical configuration. 
 
 \subsection{Scenarios}
+\label{sec:scenarios}
+
+Based on our literature review, it became evident that mobile robots are not inherently engineered to detect embodiment-specific hazards, relying heavily on artificial intelligence and vision-language models to identify and assess these risks[cite: 5, 6]. To address this gap and evaluate how physical and kinematic variations across mobile robot embodiments influence operational risk, we introduce a structured methodology centered on generating datasets of controlled scenario families[cite: 5, 6]. By systematically altering environmental parameters, obstacle behaviors, and platform configurations, we can isolate and quantify embodiment-dependent risk metrics in autonomous mobile robot operations[cite: 5, 6]. 
+
+We shortlisted the following three distinct scenario categories to form the core of our controlled dataset, each designed to evaluate operational hazards across different contexts without requiring direct physical human-robot interaction:
+
+\subsubsection{Blind Corner Navigation}
+This scenario models a classic high-risk indoor navigation challenge where a mobile robot navigates around an obstructed corner while a human pedestrian simultaneously approaches the same junction[cite: 5, 6]. The operational risk in this scenario is driven by two systematically varied factors:
+\begin{itemize}
+    \item \textbf{Robot Embodiment:} Variations in kinematic limits, mass, stopping distance, and physical footprint drastically alter the hazard profile. Heavier or faster embodiments increase collision severity and require larger safe stopping margins, while larger footprints reduce the available clearing distance around corners[cite: 5, 6].
+    \item \textbf{Presence of a Person:} The speed, trajectory offset, and visibility of a pedestrian dictate the likelihood of an encounter. Obstructed sightlines hide incoming pedestrians, reducing the dynamic reaction time for both the robot and the human, thereby substantially elevating localized risk[cite: 5, 6].
+\end{itemize}
+
+\subsubsection{Adverse Surface Transitions}
+This scenario evaluates stability, traction, and locomotion reliability when the robot traverses challenging or inconsistent floor conditions. Examples include navigating over industrial floor grilles, uneven thresholds, or liquid spills. The associated risk profile changes drastically depending on the robot's locomotion paradigm (e.g., wheeled versus legged) and center of mass, which dictate its susceptibility to slipping, tripping, or falling.
+
+\subsubsection{Dynamic Social Proximity}
+This scenario focuses on spatial navigation through environments occupied by inattentive or socially engaged pedestrians. Examples include the robot passing behind an individual distracted by a phone call, or safely maneuvering around a static group of conversing people. The risk metrics evaluate path prediction and proximity maintenance, where the robot's overall size, momentum, and operational volume dictate the safety margins required to navigate the space without startling the pedestrians.
