@@ -6,15 +6,15 @@ This chapter outlines the theoretical and experimental framework developed to ev
 \subsection{Scenarios}
 \label{sec:scenarios}
 
-Based on our literature review, it became evident that mobile robots are not inherently engineered to detect embodiment-specific hazards, relying heavily on artificial intelligence and vision-language models to identify and assess these risks[cite: 5, 6]. To address this gap and evaluate how physical and kinematic variations across mobile robot embodiments influence operational risk, we introduce a structured methodology centered on generating datasets of controlled scenario families[cite: 5, 6]. By systematically altering environmental parameters, obstacle behaviors, and platform configurations, we can isolate and quantify embodiment-dependent risk metrics in autonomous mobile robot operations[cite: 5, 6]. 
+Based on our literature review, it became evident that mobile robots are not inherently engineered to detect embodiment-specific hazards, relying heavily on artificial intelligence and vision-language models to identify and assess these risks. To address this gap and evaluate how physical and kinematic variations across mobile robot embodiments influence operational risk, we introduce a structured methodology centered on generating datasets of controlled scenario families. By systematically altering environmental parameters, obstacle behaviors, and platform configurations, we can isolate and quantify embodiment-dependent risk metrics in autonomous mobile robot operations. 
 
 We shortlisted the following three distinct scenario categories to form the core of our controlled dataset, each designed to evaluate operational hazards across different contexts without requiring direct physical human-robot interaction:
 
 \subsubsection{Blind Corner Navigation}
-This scenario models a classic high-risk indoor navigation challenge where a mobile robot navigates around an obstructed corner while a human pedestrian simultaneously approaches the same junction[cite: 5, 6]. The operational risk in this scenario is driven by two systematically varied factors:
+This scenario models a classic high-risk indoor navigation challenge where a mobile robot navigates around an obstructed corner while a human pedestrian simultaneously approaches the same junction. The operational risk in this scenario is driven by two systematically varied factors:
 \begin{itemize}
-    \item \textbf{Robot Embodiment:} Variations in kinematic limits, mass, stopping distance, and physical footprint drastically alter the hazard profile. Heavier or faster embodiments increase collision severity and require larger safe stopping margins, while larger footprints reduce the available clearing distance around corners[cite: 5, 6].
-    \item \textbf{Presence of a Person:} The speed, trajectory offset, and visibility of a pedestrian dictate the likelihood of an encounter. Obstructed sightlines hide incoming pedestrians, reducing the dynamic reaction time for both the robot and the human, thereby substantially elevating localized risk[cite: 5, 6].
+    \item \textbf{Robot Embodiment:} Variations in kinematic limits, mass, stopping distance, and physical footprint drastically alter the hazard profile. Heavier or faster embodiments increase collision severity and require larger safe stopping margins, while larger footprints reduce the available clearing distance around corners.
+    \item \textbf{Presence of a Person:} The speed, trajectory offset, and visibility of a pedestrian dictate the likelihood of an encounter. Obstructed sightlines hide incoming pedestrians, reducing the dynamic reaction time for both the robot and the human, thereby substantially elevating localized risk.
 \end{itemize}
 
 \subsubsection{Adverse Surface Transitions}
