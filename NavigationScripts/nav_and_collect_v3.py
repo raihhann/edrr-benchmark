@@ -6,6 +6,7 @@ Run from any directory, for example:
     python3 nav_and_collect_v3.py --distance 3.0 --speed 0.5 --skip-lidar
 """
 import argparse
+from collections import Counter
 import sys
 import array
 import base64
@@ -14,12 +15,13 @@ import math
 import queue
 import threading
 import time
+import statistics
 from datetime import datetime
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT / "DataCollection"))
-from sync_capture import filter_navigation_topics, source_stamp_ns, ntp_offset, compressed_message
+from sync_capture import source_stamp_ns, ntp_offset, compressed_message
 DEFAULT_SOURCES = (
     "192.168.123.161",
     "192.168.123.13",
@@ -32,6 +34,52 @@ BYTE_ARRAY_TYPES = {
     "sensor_msgs/CompressedImage",
     "sensor_msgs/PointCloud2",
 }
+
+IMAGE_TYPES = {'sensor_msgs/Image', 'sensor_msgs/CompressedImage'}
+
+
+def select_recording_topics(topics, transport='auto'):
+    """Prefer one compressed stream, falling back per camera rather than per host."""
+    selected, raw_fallbacks = {}, []
+    for name, kind in topics.items():
+        if any(part in name for part in ('/theora', '/compressedDepth',
+                                         '/parameter_descriptions', '/parameter_updates')):
+            continue
+        if kind == 'sensor_msgs/Image':
+            compressed = name + '/compressed'
+            if '/depth/' in name or 'depth_' in name or transport == 'raw':
+                selected[name] = kind
+            elif topics.get(compressed) == 'sensor_msgs/CompressedImage':
+                selected[compressed] = topics[compressed]
+            elif transport == 'compressed':
+                raise RuntimeError('Compressed image required but missing: ' + compressed)
+            else:
+                selected[name] = kind
+                raw_fallbacks.append(name)
+        elif kind == 'sensor_msgs/CompressedImage':
+            base = name.rsplit('/', 1)[0]
+            if name.endswith('/compressed') and topics.get(base) != 'sensor_msgs/Image':
+                selected[name] = kind
+        else:
+            selected[name] = kind
+    return selected, raw_fallbacks
+
+
+def raw_image_message(data):
+    """Decode bytes directly, avoiding recursive conversion of a million pixels."""
+    from sensor_msgs.msg import Image
+    message = Image()
+    stamp = source_stamp_ns(data)
+    message.header.stamp.sec, message.header.stamp.nanosec = divmod(stamp, 10**9)
+    message.header.frame_id = data.get('header', {}).get('frame_id', '')
+    for key in ('height', 'width', 'encoding', 'is_bigendian', 'step'):
+        setattr(message, key, data[key])
+    payload = data['data']
+    raw = base64.b64decode(payload, validate=True) if isinstance(payload, str) else bytes(payload)
+    if len(raw) != message.height * message.step:
+        raise ValueError('Raw image size does not equal height * step')
+    message.data = array.array('B', raw)
+    return message
 
 
 def ros1_to_ros2_type(type_name):
@@ -100,7 +148,8 @@ def source_slug(host, port):
 
 
 class MultiSourceRecorder:
-    def __init__(self, ros_by_host, source_hosts, source_port, output_dir, queue_size, skip_topics=SKIP_TOPICS):
+    def __init__(self, ros_by_host, source_hosts, source_port, output_dir, queue_size,
+                 skip_topics=SKIP_TOPICS, camera_transport='auto'):
         self.ros_by_host = ros_by_host
         self.source_hosts = source_hosts
         self.source_port = source_port
@@ -117,6 +166,16 @@ class MultiSourceRecorder:
         self.messages_dropped = 0
         self.last_drop_warning = 0
         self.drop_lock = threading.Lock()
+        self.camera_transport = camera_transport
+        self.topic_counts = Counter()
+        self.topic_timing = {}
+        self.image_topics = set()
+        self.required_live_topics = set()
+        self.last_written_monotonic = {}
+        self.status = 'preparing'
+        self.error = None
+        self.closed = False
+        self.source_hosts_with_images = set()
 
         output_dir.mkdir(parents=True, exist_ok=True)
         self.bag_path = output_dir / datetime.now().strftime(
@@ -129,18 +188,24 @@ class MultiSourceRecorder:
         found = []
         for host in self.source_hosts:
             if host not in self.ros_by_host or not self.ros_by_host[host].is_connected:
-                continue
+                raise RuntimeError('Requested recording source is disconnected: '+host)
             ros = self.ros_by_host[host]
             try:
                 result = roslibpy.Service(
                     ros, "/rosapi/topics", "rosapi/Topics"
                 ).call(roslibpy.ServiceRequest({}), timeout=5)
-                for name, type_name in filter_navigation_topics(dict(zip(result["topics"], result["types"]))).items():
+                roster = {name: kind for name, kind in zip(result['topics'], result['types'])
+                          if not name.startswith(self.skip_topics)}
+                selected, fallbacks = select_recording_topics(roster, self.camera_transport)
+                for name in fallbacks:
+                    print(f'[WARN] {host}: recording raw fallback {name}; no compressed topic is advertised. '
+                          'Raw transfer may reduce FPS or increase latency.', flush=True)
+                for name, type_name in selected.items():
                     if name.startswith(self.skip_topics):
                         continue
                     found.append((host, name, type_name))
             except Exception as error:
-                print(f"[WARN] Failed to query topics from {host}: {error}")
+                raise RuntimeError(f'Cannot discover recording source {host}: {error}') from error
 
         if not found:
             raise RuntimeError("No recordable topics were discovered on reachable hosts.")
@@ -161,6 +226,10 @@ class MultiSourceRecorder:
                     suffix += 1
             self.topic_map[(host, name)] = output_name
             self.specs[output_name] = self._make_spec(type_name)
+            if type_name in IMAGE_TYPES:
+                self.image_topics.add(output_name)
+                self.source_hosts_with_images.add(host)
+            print(f'[INFO] Selected {host} {name} [{type_name}] -> {output_name}', flush=True)
 
         return found
 
@@ -224,7 +293,7 @@ class MultiSourceRecorder:
     def _callback(self, topic_name):
         def receive(data):
             try:
-                self.queue.put_nowait((topic_name, data, time.time_ns()))
+                self.queue.put_nowait((topic_name, data, time.time_ns(), time.monotonic()))
             except queue.Full:
                 with self.drop_lock:
                     self.messages_dropped += 1
@@ -238,7 +307,7 @@ class MultiSourceRecorder:
         drain_deadline = time.monotonic() + 0.02
         while time.monotonic() < drain_deadline:
             try:
-                topic_name, data, received_ns = self.queue.get_nowait()
+                topic_name, data, received_ns, received_monotonic = self.queue.get_nowait()
             except queue.Empty:
                 break
 
@@ -246,12 +315,12 @@ class MultiSourceRecorder:
             source_ns = source_stamp_ns(data)
             corrected_receipt = round(received_ns + self.clock_reference["offset_s"] * 1e9)
             age_ms = (corrected_receipt - source_ns) / 1e6 if source_ns else None
-            if ros1_type == "sensor_msgs/CompressedImage" and source_ns and abs(age_ms) > 1000:
-                raise RuntimeError(f"Camera clock/backlog error on {topic_name}: {age_ms:.1f} ms")
             try:
                 message = message_class()
                 if ros1_type == "sensor_msgs/CompressedImage":
                     message = compressed_message(data)
+                elif ros1_type == 'sensor_msgs/Image':
+                    message = raw_image_message(data)
                 elif native:
                     normalized = convert_rosbridge(data, ros1_type)
                     fields = restore_float_nulls(normalized, message, topic_name)
@@ -269,6 +338,18 @@ class MultiSourceRecorder:
                 self.writer.write(topic_name, serialize_message(message), bag_stamp)
                 self.timing_file.write(json.dumps({"topic": topic_name, "source_ns": source_ns, "arrival_ns": received_ns, "bag_timestamp_ns": bag_stamp, "age_ms": age_ms, "seq": data.get("header", {}).get("seq")}) + "\n")
                 self.messages_written += 1
+                self.topic_counts[topic_name] += 1
+                self.last_written_monotonic[topic_name] = received_monotonic
+                stat = self.topic_timing.setdefault(topic_name, {'first_arrival_ns': received_ns,
+                    'last_arrival_ns': received_ns, 'first_source_ns': source_ns,
+                    'last_source_ns': source_ns, 'last_seq': None, 'sequence_gaps': 0,
+                    'age_ms': [], 'missing_source_stamps': 0})
+                seq = data.get('header', {}).get('seq')
+                if seq is not None and stat['last_seq'] is not None and seq > stat['last_seq']:
+                    stat['sequence_gaps'] += max(0, seq - stat['last_seq'] - 1)
+                stat.update(last_arrival_ns=received_ns, last_source_ns=source_ns, last_seq=seq)
+                if age_ms is not None: stat['age_ms'].append(age_ms)
+                elif topic_name in self.image_topics: stat['missing_source_stamps'] += 1
             except Exception as error:
                 self.messages_failed += 1
                 if self.messages_failed == 1 or self.messages_failed % 100 == 0:
@@ -276,12 +357,69 @@ class MultiSourceRecorder:
                         f"[ERROR] Could not record {topic_name} "
                         f"({self.messages_failed} failures so far): {error}"
                     )
+                raise RuntimeError(f'Recording failed for {topic_name}: {error}') from error
 
         if self.messages_dropped - self.last_drop_warning >= 50:
             print(f"[WARN] Queue overflow dropped {self.messages_dropped} messages.")
             self.last_drop_warning = self.messages_dropped
 
+    def configure_requirements(self, allow_no_video=False):
+        if not self.image_topics and not allow_no_video:
+            raise RuntimeError('No camera image topics selected. Start the cameras, or explicitly use --allow-no-video.')
+        # Do not silently turn a requested Jetson camera source into a telemetry-only run.
+        if not allow_no_video:
+            missing = [host for host in self.source_hosts
+                       if host in DEFAULT_SOURCES[1:] and host not in self.source_hosts_with_images]
+            if missing: raise RuntimeError('No image topics on requested camera sources: '+str(missing))
+        self.required_live_topics = set(self.image_topics)
+        for (host, original), output in self.topic_map.items():
+            if original in ('/go1_controller/odom', '/go1_controller/imu/data'):
+                self.required_live_topics.add(output)
+
+    def check_health(self, require_ready=True):
+        if self.messages_failed or self.messages_dropped:
+            raise RuntimeError(f'Recording data loss: failed={self.messages_failed}, dropped={self.messages_dropped}')
+        disconnected = [host for host, ros in self.ros_by_host.items() if not ros.is_connected]
+        if disconnected: raise RuntimeError('Recording sources disconnected: '+str(disconnected))
+        missing = [topic for topic in self.required_live_topics if self.topic_counts[topic] <
+                   (2 if topic in self.image_topics else 1)]
+        if missing:
+            if require_ready: raise RuntimeError('Required streams have not delivered messages: '+str(sorted(missing)))
+            return False
+        now = time.monotonic()
+        stale = [topic for topic in self.required_live_topics
+                 if now-self.last_written_monotonic.get(topic, 0) > (2. if topic in self.image_topics else .5)]
+        if stale:
+            if require_ready: raise RuntimeError('Required streams are stale/backlogged: '+str(sorted(stale)))
+            return False
+        for topic in self.image_topics:
+            stat = self.topic_timing[topic]
+            if stat['missing_source_stamps']:
+                raise RuntimeError('Camera has no usable source timestamps: '+topic)
+            if stat['age_ms'] and abs(stat['age_ms'][-1]) > 1000:
+                raise RuntimeError(f'Camera clock/delivery delay exceeds 1 second: {topic}. '
+                                   'Raw fallback may require robot-side compression for a usable run.')
+        return True
+
+    def wait_until_ready(self, timeout=15.):
+        deadline = time.monotonic()+timeout
+        stable_since = None
+        while time.monotonic() < deadline:
+            self.drain()
+            if self.check_health(require_ready=False):
+                if stable_since is None: stable_since = time.monotonic()
+                if time.monotonic()-stable_since >= 1.:
+                    print('[INFO] Camera/telemetry preflight passed; actual messages verified.', flush=True)
+                    return
+            else:
+                stable_since = None
+            time.sleep(.002)
+        self.check_health()
+        raise RuntimeError('Preflight timeout')
+
     def close(self):
+        if self.closed: return
+        self.closed = True
         for subscription in self.subscriptions:
             try:
                 subscription.unsubscribe()
@@ -289,7 +427,10 @@ class MultiSourceRecorder:
                 print(f"[WARN] Could not unsubscribe: {error}")
         flush_deadline = time.monotonic() + 5
         while not self.queue.empty() and time.monotonic() < flush_deadline:
-            self.drain()
+            try: self.drain()
+            except Exception as error:
+                self.status, self.error = 'aborted', str(error)
+                break
         if hasattr(self, "timing_file"):
             self.timing_file.close()
         if self.writer is not None:
@@ -297,6 +438,33 @@ class MultiSourceRecorder:
             self.writer = None
         if self.queue.qsize():
             print(f"[WARN] {self.queue.qsize()} messages were not written at shutdown")
+        if self.bag_path.exists():
+            report = {'status': self.status, 'error': self.error,
+                'camera_transport': self.camera_transport, 'source_hosts': self.source_hosts,
+                'clock_reference': getattr(self, 'clock_reference', None),
+                'bag_time': 'source header time; Pi-corrected receipt time for messages without headers',
+                'hardware_synchronization': False, 'messages_written': self.messages_written,
+                'conversion_failures': self.messages_failed, 'local_queue_drops': self.messages_dropped,
+                'unprocessed_queue_messages': self.queue.qsize(), 'topics': {}}
+            for topic, (_, _, original_type, _) in self.specs.items():
+                stat = self.topic_timing.get(topic, {})
+                count = self.topic_counts[topic]
+                def rate(first, last): return (count-1)*1e9/(last-first) if count>1 and last>first else None
+                ages = sorted(stat.get('age_ms', []))
+                report['topics'][topic] = {'ros1_type': original_type, 'messages': count,
+                    'image': topic in self.image_topics,
+                    'arrival_hz': rate(stat.get('first_arrival_ns',0),stat.get('last_arrival_ns',0)),
+                    'source_hz': rate(stat.get('first_source_ns',0),stat.get('last_source_ns',0)),
+                    'source_sequence_gaps': stat.get('sequence_gaps',0),
+                    'median_age_ms': statistics.median(ages) if ages else None,
+                    'max_age_ms': max(ages) if ages else None}
+            report['topics_without_messages'] = [topic for topic in self.specs if not self.topic_counts[topic]]
+            report['image_topics_with_sequence_gaps'] = [topic for topic in self.image_topics
+                if self.topic_timing.get(topic,{}).get('sequence_gaps',0)]
+            if report['status']=='complete' and (report['topics_without_messages'] or
+                report['image_topics_with_sequence_gaps'] or self.messages_dropped or self.queue.qsize()):
+                report['status']='partial'
+            (self.bag_path/'capture_report.json').write_text(json.dumps(report,indent=2))
         if self.node is not None:
             self.node.destroy_node()
             self.node = None
@@ -418,6 +586,12 @@ def parse_args():
         help="Directory to save the ROS 2 bag",
     )
     parser.add_argument("--queue-size", type=int, default=10000, help="Internal queue size (10000 recommended for LiDAR)")
+    parser.add_argument('--camera-transport', choices=('auto','compressed','raw'), default='auto',
+                        help='auto prefers compressed and records raw when compression is absent; never skips a whole camera source')
+    parser.add_argument('--startup-timeout', type=float, default=15.,
+                        help='Seconds to wait for actual camera and telemetry messages before movement')
+    parser.add_argument('--allow-no-video', action='store_true',
+                        help='Explicitly permit requested camera hosts with no image topics')
     parser.add_argument("--odom-timeout", type=float, default=20.0, help="Odometry timeout")
     parser.add_argument(
         "--skip-realsense",
@@ -434,6 +608,12 @@ def parse_args():
         parser.error("--distance must be non-negative")
     if not math.isfinite(args.speed):
         parser.error("--speed must be finite")
+    if not math.isfinite(args.duration) or not 0 < args.duration <= 3600:
+        parser.error('--duration must be in (0,3600]')
+    if not math.isfinite(args.startup_timeout) or args.startup_timeout <= 0:
+        parser.error('--startup-timeout must be positive')
+    if args.queue_size <= 0 or args.port <= 0 or args.source_port <= 0:
+        parser.error('queue-size and ports must be positive')
     args.sources = list(dict.fromkeys(h.strip() for h in args.sources.split(",") if h.strip()))
     return args
 
@@ -457,19 +637,20 @@ def main():
     endpoint_keys.add((args.host, args.port))
     recorder = None
     navigator = None
+    attempted_connections = []
 
     try:
         for host, port in sorted(endpoint_keys):
             ros = roslibpy.Ros(host=host, port=port)
+            attempted_connections.append(ros)
             print(f"[INFO] Connecting to rosbridge {host}:{port}...")
             try:
                 ros.run(timeout=5)
                 if not ros.is_connected:
-                    print(f"[WARN] Could not connect to {host}:{port}, skipping.")
-                    continue
+                    raise RuntimeError(f'Requested rosbridge {host}:{port} is unreachable')
                 endpoints[(host, port)] = ros
             except Exception as e:
-                print(f"[WARN] Connection error on {host}:{port}: {e}")
+                raise RuntimeError(f'Connection error on required source {host}:{port}: {e}') from e
 
         nav_key = (args.host, args.port)
         if nav_key not in endpoints or not endpoints[nav_key].is_connected:
@@ -485,18 +666,23 @@ def main():
             args.out.expanduser().resolve(),
             args.queue_size,
             skip_topics=skip_prefixes,
+            camera_transport=args.camera_transport,
         )
         discovered = recorder.discover()
+        recorder.configure_requirements(args.allow_no_video)
         recorder.open(discovered)
         recorder.subscribe(discovered)
         print(f"[INFO] Recording {len(discovered)} source topics to {recorder.bag_path}")
+        recorder.wait_until_ready(args.startup_timeout)
 
         if args.record_only:
             until = time.monotonic() + args.duration
             print(f"[INFO] Stationary source-timed recording for {args.duration:.1f}s; no motion commands.")
             while time.monotonic() < until:
                 recorder.drain()
+                recorder.check_health()
                 time.sleep(.002)
+            recorder.status = 'complete'
             return
 
         navigator = Go1Navigator(endpoints[(args.host, args.port)], args.host, args.port)
@@ -505,6 +691,7 @@ def main():
         odom_deadline = time.monotonic() + args.odom_timeout
         while navigator.latest_odom is None and time.monotonic() < odom_deadline:
             recorder.drain()
+            recorder.check_health()
             time.sleep(0.02)
         if navigator.latest_odom is None:
             raise RuntimeError("Timed out waiting for /go1_controller/odom.")
@@ -519,6 +706,7 @@ def main():
                     raise RuntimeError("Navigation rosbridge host disconnected.")
 
                 recorder.drain()
+                recorder.check_health()
                 current_x, current_y, current_heading = navigator.pose()
                 dx = current_x - start_x
                 dy = current_y - start_y
@@ -550,9 +738,15 @@ def main():
         while time.monotonic() < flush_deadline:
             recorder.drain()
             time.sleep(0.05)
+        recorder.status = 'complete'
 
     except KeyboardInterrupt:
+        if recorder is not None: recorder.status = 'interrupted'
         print("\n[INFO] Interrupted by user.")
+    except Exception as error:
+        if recorder is not None:
+            recorder.status, recorder.error = 'aborted', str(error)
+        raise
     finally:
         if navigator is not None:
             navigator.close()
@@ -562,7 +756,7 @@ def main():
                 f"[INFO] Bag finalized: {recorder.bag_path}\n"
                 f"       Wrote: {recorder.messages_written} | Failed: {recorder.messages_failed} | Dropped: {recorder.messages_dropped}"
             )
-        connection_list = list(endpoints.values())
+        connection_list = attempted_connections
         for ros in connection_list:
             if ros.is_connected:
                 ros.close()
