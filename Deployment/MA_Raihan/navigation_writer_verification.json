@@ -1,0 +1,760 @@
+{
+  "status": "partial",
+  "error": null,
+  "camera_transport": "auto",
+  "source_hosts": [
+    "192.168.123.161",
+    "192.168.123.13",
+    "192.168.123.14",
+    "192.168.123.15"
+  ],
+  "clock_reference": {
+    "server": "192.168.123.161",
+    "offset_s": -0.00028336048126220703,
+    "round_trip_s": 0.00393986701965332,
+    "stratum": 2,
+    "note": "Offset is Pi minus laptop; orphan/local reference is not verified absolute UTC."
+  },
+  "bag_time": "source header time; Pi-corrected receipt time for messages without headers",
+  "hardware_synchronization": false,
+  "messages_written": 6720,
+  "conversion_failures": 0,
+  "local_queue_drops": 0,
+  "unprocessed_queue_messages": 0,
+  "topics": {
+    "/ma_raihan/robot/temperature/RR_thigh_joint": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 0.9837602812720782,
+      "source_hz": 0.9879659959057706,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 88.236198,
+      "max_age_ms": 162.432765
+    },
+    "/ma_raihan/robot/raw_low_state": {
+      "ros1_type": "ma_raihan_sensors/RawPacket",
+      "messages": 141,
+      "image": false,
+      "arrival_hz": 9.843187682757353,
+      "source_hz": 9.88147849147889,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 48.412185,
+      "max_age_ms": 147.49769
+    },
+    "/ma_raihan/controllers/pi/temperature/cpu_thermal": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 15,
+      "image": false,
+      "arrival_hz": 0.9996404820853307,
+      "source_hz": 0.9999809950040539,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 43.540997,
+      "max_age_ms": 77.235
+    },
+    "/ma_raihan/robot/temperature/FR_calf_joint": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 0.9877199501663739,
+      "source_hz": 0.9879659959057706,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 77.641299,
+      "max_age_ms": 131.62372
+    },
+    "/ma_raihan/robot/temperature/RR_calf_joint": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 0.9837121166339331,
+      "source_hz": 0.9879659959057706,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 101.5427505,
+      "max_age_ms": 158.715389
+    },
+    "/ma_raihan/robot/temperature/FL_calf_joint": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 0.9837256632828759,
+      "source_hz": 0.9879659959057706,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 101.4155185,
+      "max_age_ms": 163.116093
+    },
+    "/ma_raihan/robot/motor_states": {
+      "ros1_type": "ma_raihan_sensors/MotorState",
+      "messages": 344,
+      "image": false,
+      "arrival_hz": 24.37948237626879,
+      "source_hz": 24.702651912123365,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 193.39118150000002,
+      "max_age_ms": 622.036605
+    },
+    "/ma_raihan/robot/temperature/RR_hip_joint": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 0.9836764813436805,
+      "source_hz": 0.9879659959057706,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 101.45020650000001,
+      "max_age_ms": 162.349309
+    },
+    "/ma_raihan/robot/temperature/RL_thigh_joint": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 0.9837483462543296,
+      "source_hz": 0.9879659959057706,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 101.969451,
+      "max_age_ms": 162.176509
+    },
+    "/ma_raihan/robot/temperature/FL_hip_joint": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 0.9837693785285391,
+      "source_hz": 0.9879659959057706,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 101.2968625,
+      "max_age_ms": 158.407421
+    },
+    "/ma_raihan/robot/temperature/FL_thigh_joint": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 0.9802599795237896,
+      "source_hz": 0.9879659959057706,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 100.6719485,
+      "max_age_ms": 161.875709
+    },
+    "/ma_raihan/robot/temperature/FR_hip_joint": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 0.9837348854812131,
+      "source_hz": 0.9879659959057706,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 100.2819325,
+      "max_age_ms": 162.260989
+    },
+    "/ma_raihan/robot/temperature/FR_thigh_joint": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 0.9833937921315213,
+      "source_hz": 0.9879659959057706,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 77.663827,
+      "max_age_ms": 166.919165
+    },
+    "/ma_raihan/robot/odom": {
+      "ros1_type": "nav_msgs/Odometry",
+      "messages": 568,
+      "image": false,
+      "arrival_hz": 41.356393804980435,
+      "source_hz": 44.52664682615878,
+      "source_sequence_gaps": 62,
+      "median_age_ms": 646.9935310000001,
+      "max_age_ms": 1170.681829
+    },
+    "/ma_raihan/robot/raw_high_state": {
+      "ros1_type": "ma_raihan_sensors/RawPacket",
+      "messages": 135,
+      "image": false,
+      "arrival_hz": 9.844327029843383,
+      "source_hz": 9.880547373523433,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 46.994174,
+      "max_age_ms": 142.4492
+    },
+    "/ma_raihan/robot/imu": {
+      "ros1_type": "sensor_msgs/Imu",
+      "messages": 670,
+      "image": false,
+      "arrival_hz": 49.45326185339547,
+      "source_hz": 49.40605164654874,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 62.120011500000004,
+      "max_age_ms": 265.526722
+    },
+    "/ma_raihan/robot/temperature/RL_calf_joint": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 13,
+      "image": false,
+      "arrival_hz": 0.9855956314648465,
+      "source_hz": 0.9880395339377799,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 101.590041,
+      "max_age_ms": 158.602237
+    },
+    "/ma_raihan/robot/temperature/RL_hip_joint": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 13,
+      "image": false,
+      "arrival_hz": 0.983787006250799,
+      "source_hz": 0.9880395339377799,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 99.172956,
+      "max_age_ms": 161.996285
+    },
+    "/ma_raihan/robot/low_state": {
+      "ros1_type": "ma_raihan_sensors/RobotLowState",
+      "messages": 129,
+      "image": false,
+      "arrival_hz": 9.854760017173545,
+      "source_hz": 9.879611178287982,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 64.954244,
+      "max_age_ms": 254.19151
+    },
+    "/ma_raihan/robot/battery": {
+      "ros1_type": "sensor_msgs/BatteryState",
+      "messages": 647,
+      "image": false,
+      "arrival_hz": 49.390974398512135,
+      "source_hz": 49.40282620404313,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 41.101942,
+      "max_age_ms": 176.158705
+    },
+    "/go1_controller/cmd_vel": {
+      "ros1_type": "geometry_msgs/Twist",
+      "messages": 0,
+      "image": false,
+      "arrival_hz": null,
+      "source_hz": null,
+      "source_sequence_gaps": 0,
+      "median_age_ms": null,
+      "max_age_ms": null
+    },
+    "/ma_raihan/robot/high_state": {
+      "ros1_type": "ma_raihan_sensors/RobotState",
+      "messages": 126,
+      "image": false,
+      "arrival_hz": 9.942131639064234,
+      "source_hz": 9.881478142444816,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 80.54323450000001,
+      "max_age_ms": 245.79858
+    },
+    "/ma_raihan/robot/joint_states_measured": {
+      "ros1_type": "sensor_msgs/JointState",
+      "messages": 614,
+      "image": false,
+      "arrival_hz": 49.45341132282266,
+      "source_hz": 49.40288794510416,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 62.4168985,
+      "max_age_ms": 257.130034
+    },
+    "/ma_raihan/controllers/13/temperature/PLL_therm": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 1.0005233757019132,
+      "source_hz": 0.9999739947532136,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 16.903952,
+      "max_age_ms": 29.018815
+    },
+    "/ma_raihan/controllers/13/temperature/PMIC_Die": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 1.0010287005219014,
+      "source_hz": 0.99975036471795,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 11.338315999999999,
+      "max_age_ms": 24.429688
+    },
+    "/ma_raihan/controllers/13/temperature/CPU_therm": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 1.0004970373079707,
+      "source_hz": 0.999984539700563,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 14.63084,
+      "max_age_ms": 28.387804
+    },
+    "/ma_raihan/cameras/front/image_rect/compressed": {
+      "ros1_type": "sensor_msgs/CompressedImage",
+      "messages": 152,
+      "image": true,
+      "arrival_hz": 10.84613676094129,
+      "source_hz": 10.854541381968579,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 77.058584,
+      "max_age_ms": 161.424488
+    },
+    "/ma_raihan/cameras/front/metadata": {
+      "ros1_type": "std_msgs/String",
+      "messages": 1,
+      "image": false,
+      "arrival_hz": null,
+      "source_hz": null,
+      "source_sequence_gaps": 0,
+      "median_age_ms": null,
+      "max_age_ms": null
+    },
+    "/ma_raihan/controllers/13/temperature/GPU_therm": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 0.9999119764411367,
+      "source_hz": 0.9997687507962557,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 10.507527,
+      "max_age_ms": 38.832561
+    },
+    "/ma_raihan/cameras/front/diagnostics": {
+      "ros1_type": "std_msgs/String",
+      "messages": 13,
+      "image": false,
+      "arrival_hz": 0.953034043617206,
+      "source_hz": null,
+      "source_sequence_gaps": 0,
+      "median_age_ms": null,
+      "max_age_ms": null
+    },
+    "/ma_raihan/controllers/13/temperature/thermal_fan_est": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 13,
+      "image": false,
+      "arrival_hz": 1.0003714742752285,
+      "source_hz": 0.9998237006702676,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 12.076154,
+      "max_age_ms": 37.396887
+    },
+    "/ma_raihan/cameras/front/camera_info": {
+      "ros1_type": "sensor_msgs/CameraInfo",
+      "messages": 146,
+      "image": false,
+      "arrival_hz": 10.931403614512858,
+      "source_hz": 10.909974651238207,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 78.133072,
+      "max_age_ms": 161.610088
+    },
+    "/ma_raihan/cameras/front/depth/image_native/compressed": {
+      "ros1_type": "sensor_msgs/CompressedImage",
+      "messages": 65,
+      "image": true,
+      "arrival_hz": 4.882833103922525,
+      "source_hz": 4.857108055096302,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 97.643048,
+      "max_age_ms": 167.692648
+    },
+    "/ma_raihan/cameras/front/depth/camera_info": {
+      "ros1_type": "sensor_msgs/CameraInfo",
+      "messages": 64,
+      "image": false,
+      "arrival_hz": 4.926193909658267,
+      "source_hz": 4.922016892518229,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 102.167064,
+      "max_age_ms": 153.829136
+    },
+    "/ma_raihan/cameras/front/points_native": {
+      "ros1_type": "sensor_msgs/PointCloud2",
+      "messages": 13,
+      "image": false,
+      "arrival_hz": 0.9914183907223664,
+      "source_hz": 0.9885310626115804,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 91.285664,
+      "max_age_ms": 136.65084
+    },
+    "/ma_raihan/controllers/13/temperature/AO_therm": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 13,
+      "image": false,
+      "arrival_hz": 1.000882444521773,
+      "source_hz": 0.9997917053123827,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 9.000992,
+      "max_age_ms": 38.091531
+    },
+    "/ma_raihan/cameras/front/factory_calibration": {
+      "ros1_type": "std_msgs/String",
+      "messages": 1,
+      "image": false,
+      "arrival_hz": null,
+      "source_hz": null,
+      "source_sequence_gaps": 0,
+      "median_age_ms": null,
+      "max_age_ms": null
+    },
+    "/ma_raihan/cameras/left/image_rect/compressed": {
+      "ros1_type": "sensor_msgs/CompressedImage",
+      "messages": 286,
+      "image": true,
+      "arrival_hz": 19.91717788484905,
+      "source_hz": 19.90962845000678,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 34.278040000000004,
+      "max_age_ms": 97.663976
+    },
+    "/ma_raihan/controllers/14/temperature/GPU_therm": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 15,
+      "image": false,
+      "arrival_hz": 0.999402952678458,
+      "source_hz": 0.9999769250324664,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 14.753212,
+      "max_age_ms": 55.120014
+    },
+    "/ma_raihan/cameras/right/camera_info": {
+      "ros1_type": "sensor_msgs/CameraInfo",
+      "messages": 345,
+      "image": false,
+      "arrival_hz": 24.126483245517306,
+      "source_hz": 24.08246170923592,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 34.298856,
+      "max_age_ms": 96.206064
+    },
+    "/ma_raihan/cameras/right/depth/image_native/compressed": {
+      "ros1_type": "sensor_msgs/CompressedImage",
+      "messages": 71,
+      "image": true,
+      "arrival_hz": 4.963718154556722,
+      "source_hz": 4.975400553506204,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 36.16876,
+      "max_age_ms": 75.703712
+    },
+    "/ma_raihan/controllers/14/temperature/thermal_fan_est": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 1.0031443250207985,
+      "source_hz": 1.0000706135243793,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 15.902009,
+      "max_age_ms": 54.483433
+    },
+    "/ma_raihan/cameras/left/diagnostics": {
+      "ros1_type": "std_msgs/String",
+      "messages": 13,
+      "image": false,
+      "arrival_hz": 0.9686688924001059,
+      "source_hz": null,
+      "source_sequence_gaps": 0,
+      "median_age_ms": null,
+      "max_age_ms": null
+    },
+    "/ma_raihan/cameras/right/metadata": {
+      "ros1_type": "std_msgs/String",
+      "messages": 1,
+      "image": false,
+      "arrival_hz": null,
+      "source_hz": null,
+      "source_sequence_gaps": 0,
+      "median_age_ms": null,
+      "max_age_ms": null
+    },
+    "/ma_raihan/cameras/left/points_native": {
+      "ros1_type": "sensor_msgs/PointCloud2",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 0.995658426605672,
+      "source_hz": 0.9961424765726447,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 40.184368,
+      "max_age_ms": 51.491624
+    },
+    "/ma_raihan/cameras/left/factory_calibration": {
+      "ros1_type": "std_msgs/String",
+      "messages": 1,
+      "image": false,
+      "arrival_hz": null,
+      "source_hz": null,
+      "source_sequence_gaps": 0,
+      "median_age_ms": null,
+      "max_age_ms": null
+    },
+    "/ma_raihan/cameras/right/diagnostics": {
+      "ros1_type": "std_msgs/String",
+      "messages": 13,
+      "image": false,
+      "arrival_hz": 0.9714071153998981,
+      "source_hz": null,
+      "source_sequence_gaps": 0,
+      "median_age_ms": null,
+      "max_age_ms": null
+    },
+    "/ma_raihan/cameras/left/depth/camera_info": {
+      "ros1_type": "sensor_msgs/CameraInfo",
+      "messages": 70,
+      "image": false,
+      "arrival_hz": 4.9719984361955225,
+      "source_hz": 4.9713652961381065,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 35.891472,
+      "max_age_ms": 57.33812
+    },
+    "/ma_raihan/cameras/left/metadata": {
+      "ros1_type": "std_msgs/String",
+      "messages": 1,
+      "image": false,
+      "arrival_hz": null,
+      "source_hz": null,
+      "source_sequence_gaps": 0,
+      "median_age_ms": null,
+      "max_age_ms": null
+    },
+    "/ma_raihan/controllers/14/temperature/PMIC_Die": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 1.0030907693435158,
+      "source_hz": 1.0000616074875563,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 18.1065325,
+      "max_age_ms": 55.621834
+    },
+    "/ma_raihan/controllers/14/temperature/PLL_therm": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 1.0033616924205013,
+      "source_hz": 1.0000071525896208,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 10.7052975,
+      "max_age_ms": 57.190023
+    },
+    "/ma_raihan/cameras/right/factory_calibration": {
+      "ros1_type": "std_msgs/String",
+      "messages": 1,
+      "image": false,
+      "arrival_hz": null,
+      "source_hz": null,
+      "source_sequence_gaps": 0,
+      "median_age_ms": null,
+      "max_age_ms": null
+    },
+    "/ma_raihan/cameras/left/camera_info": {
+      "ros1_type": "sensor_msgs/CameraInfo",
+      "messages": 275,
+      "image": false,
+      "arrival_hz": 19.94931777819247,
+      "source_hz": 19.944992583956772,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 34.420872,
+      "max_age_ms": 83.238568
+    },
+    "/ma_raihan/controllers/14/temperature/CPU_therm": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 1.0030969784323769,
+      "source_hz": 1.0000180100935885,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 10.176444499999999,
+      "max_age_ms": 56.694757
+    },
+    "/ma_raihan/controllers/14/temperature/AO_therm": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 1.003374723066531,
+      "source_hz": 1.0000743003662882,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 13.208946000000001,
+      "max_age_ms": 54.882083
+    },
+    "/ma_raihan/cameras/right/depth/camera_info": {
+      "ros1_type": "sensor_msgs/CameraInfo",
+      "messages": 67,
+      "image": false,
+      "arrival_hz": 4.955218724372566,
+      "source_hz": 4.962972838777602,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 36.859432,
+      "max_age_ms": 76.199328
+    },
+    "/ma_raihan/cameras/right/image_rect/compressed": {
+      "ros1_type": "sensor_msgs/CompressedImage",
+      "messages": 329,
+      "image": true,
+      "arrival_hz": 24.237955614334968,
+      "source_hz": 24.222446542426685,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 34.330664,
+      "max_age_ms": 96.067056
+    },
+    "/ma_raihan/cameras/right/points_native": {
+      "ros1_type": "sensor_msgs/PointCloud2",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 0.9937346500278614,
+      "source_hz": 0.993024158062558,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 37.919408000000004,
+      "max_age_ms": 49.061552
+    },
+    "/ma_raihan/cameras/left/depth/image_native/compressed": {
+      "ros1_type": "sensor_msgs/CompressedImage",
+      "messages": 67,
+      "image": true,
+      "arrival_hz": 4.979783810092181,
+      "source_hz": 4.982759275425265,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 35.567488,
+      "max_age_ms": 57.477384
+    },
+    "/ma_raihan/controllers/15/temperature/thermal_fan_est": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 1.0002493059841362,
+      "source_hz": 0.9998912562111131,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 8.275097500000001,
+      "max_age_ms": 18.758812
+    },
+    "/ma_raihan/controllers/15/temperature/PMIC_Die": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 1.0005975750365061,
+      "source_hz": 1.0000245393713967,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 9.58465,
+      "max_age_ms": 18.016258
+    },
+    "/ma_raihan/controllers/15/temperature/AO_therm": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 1.0002747472345397,
+      "source_hz": 0.9999868504806044,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 11.528418,
+      "max_age_ms": 20.747077
+    },
+    "/ma_raihan/cameras/rear_down/camera_info": {
+      "ros1_type": "sensor_msgs/CameraInfo",
+      "messages": 361,
+      "image": false,
+      "arrival_hz": 25.17439543557196,
+      "source_hz": 25.16753362994204,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 21.063176,
+      "max_age_ms": 82.063096
+    },
+    "/ma_raihan/cameras/rear_down/depth/camera_info": {
+      "ros1_type": "sensor_msgs/CameraInfo",
+      "messages": 71,
+      "image": false,
+      "arrival_hz": 4.976568697896416,
+      "source_hz": 4.9776853919369035,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 38.026576,
+      "max_age_ms": 110.070664
+    },
+    "/ma_raihan/cameras/rear_down/image_rect/compressed": {
+      "ros1_type": "sensor_msgs/CompressedImage",
+      "messages": 359,
+      "image": true,
+      "arrival_hz": 25.180867276560964,
+      "source_hz": 25.17089136876073,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 21.701776,
+      "max_age_ms": 81.934072
+    },
+    "/ma_raihan/controllers/15/temperature/GPU_therm": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 1.0006150334952353,
+      "source_hz": 0.999984851460251,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 10.334844,
+      "max_age_ms": 20.229088
+    },
+    "/ma_raihan/cameras/rear_down/metadata": {
+      "ros1_type": "std_msgs/String",
+      "messages": 1,
+      "image": false,
+      "arrival_hz": null,
+      "source_hz": null,
+      "source_sequence_gaps": 0,
+      "median_age_ms": null,
+      "max_age_ms": null
+    },
+    "/ma_raihan/cameras/rear_down/factory_calibration": {
+      "ros1_type": "std_msgs/String",
+      "messages": 1,
+      "image": false,
+      "arrival_hz": null,
+      "source_hz": null,
+      "source_sequence_gaps": 0,
+      "median_age_ms": null,
+      "max_age_ms": null
+    },
+    "/ma_raihan/cameras/rear_down/depth/image_native/compressed": {
+      "ros1_type": "sensor_msgs/CompressedImage",
+      "messages": 70,
+      "image": true,
+      "arrival_hz": 4.963199275341141,
+      "source_hz": 4.962540014973925,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 37.780744,
+      "max_age_ms": 97.446784
+    },
+    "/ma_raihan/controllers/15/temperature/AUX_therm": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 1.000560618963676,
+      "source_hz": 1.0000123062283646,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 9.1054455,
+      "max_age_ms": 19.740629
+    },
+    "/ma_raihan/cameras/rear_down/points_native": {
+      "ros1_type": "sensor_msgs/PointCloud2",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 0.998145595742413,
+      "source_hz": 0.9944806324896822,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 43.973388,
+      "max_age_ms": 109.915784
+    },
+    "/ma_raihan/cameras/rear_down/diagnostics": {
+      "ros1_type": "std_msgs/String",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 0.9677583126440725,
+      "source_hz": null,
+      "source_sequence_gaps": 0,
+      "median_age_ms": null,
+      "max_age_ms": null
+    },
+    "/ma_raihan/controllers/15/temperature/CPU_therm": {
+      "ros1_type": "sensor_msgs/Temperature",
+      "messages": 14,
+      "image": false,
+      "arrival_hz": 1.0002626338045584,
+      "source_hz": 0.9998979305730775,
+      "source_sequence_gaps": 0,
+      "median_age_ms": 8.726384,
+      "max_age_ms": 19.206273
+    }
+  },
+  "topics_without_messages": [
+    "/go1_controller/cmd_vel"
+  ],
+  "image_topics_with_sequence_gaps": []
+}

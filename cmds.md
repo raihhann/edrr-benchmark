@@ -212,3 +212,8 @@ rosrun rosapi rosapi_node
 ```
 
 This starts the `rosapi` node required for topic discovery via the `/rosapi/topics` service.
+
+
+## Latest v4 deployment (2026-10-23)
+
+Use `python3 nav_and_collect_v4.py --navigate --distance 1 --speed 0.2` from NavigationScripts after starting the Pi with `--control`. V4 uses the single stamped odometry subscription and an independent recording writer. The real short movement test passed with the reduced Pi telemetry profile; rates and limitations are documented in Deployment/MA_Raihan/README.md and movement_verification.json.

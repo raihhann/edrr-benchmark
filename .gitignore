@@ -10,3 +10,9 @@ __pycache__/
 
 # VS Code / editor files
 .vscode/
+
+# Deployment artifacts
+/Deployment/MA_Raihan/controllers/*.tar.gz
+
+# Archive files backuped up by gpt
+Archiv/

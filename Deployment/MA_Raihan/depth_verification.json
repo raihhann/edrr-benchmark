@@ -1,0 +1,22 @@
+{
+  "front": {
+    "point_cloud_depth_pairs_verified": 14,
+    "nonzero_depth_pixels_across_checked_pairs": 1374,
+    "max_allowed_rounding_error_mm": 1
+  },
+  "left": {
+    "point_cloud_depth_pairs_verified": 13,
+    "nonzero_depth_pixels_across_checked_pairs": 3678,
+    "max_allowed_rounding_error_mm": 1
+  },
+  "right": {
+    "point_cloud_depth_pairs_verified": 13,
+    "nonzero_depth_pixels_across_checked_pairs": 2403,
+    "max_allowed_rounding_error_mm": 1
+  },
+  "rear_down": {
+    "point_cloud_depth_pairs_verified": 15,
+    "nonzero_depth_pixels_across_checked_pairs": 0,
+    "max_allowed_rounding_error_mm": 1
+  }
+}
