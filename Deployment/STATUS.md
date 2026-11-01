@@ -1,0 +1,1 @@
+Battery swap checkpoint. See README.md Current verification status. All original workspaces preserved. Experimental extended driver disabled; original base binary selected. Combined recording/navigation remains unverified.
