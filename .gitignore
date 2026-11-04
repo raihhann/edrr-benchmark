@@ -1,0 +1,43 @@
+# ROS 2 Bag Files & Local Bag Directories
+sample_bags/
+uploaded_bags/
+*.db3
+*.db3-shm
+*.db3-wal
+*.mcap
+*.bag
+
+# Python Bytecode & Environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv/
+venv/
+env/
+ENV/
+
+# IDE, OS & Logs
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+*.log
+.env

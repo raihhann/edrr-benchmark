@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ROS 2 Bag Visualization Studio — Synchronized Multi-Robot Playback</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <!-- Top Navigation & Bag Status Bar -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 2v3m0 14v3M2 12h3m14 0h3m-3.07-6.93-2.12 2.12M7.19 16.81l-2.12 2.12m0-13.86 2.12 2.12m9.62 9.62 2.12 2.12"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-title">ROS 2 Bag Studio</div>
+        <div class="brand-subtitle">Synchronized Multi-Camera &amp; Telemetry Visualizer</div>
+      </div>
+    </div>
+
+    <div class="bag-meta-bar" id="bagMetaBar">
+      <span class="badge badge-robot" id="robotProfileBadge">No Bag Loaded</span>
+      <span class="meta-item" id="bagNameDisplay">Upload or select a bag to begin</span>
+      <span class="meta-divider">|</span>
+      <span class="meta-item"><strong id="bagDurationDisplay">0.00s</strong> duration</span>
+      <span class="meta-divider">|</span>
+      <span class="meta-item"><strong id="bagTopicsCount">0</strong> topics</span>
+      <span class="meta-divider">|</span>
+      <span class="meta-item"><strong id="bagMsgsCount">0</strong> msgs</span>
+      <span class="meta-divider">|</span>
+      <span class="meta-item"><strong id="bagCamsCount">0</strong> cameras</span>
+    </div>
+
+    <div class="topbar-actions">
+      <div class="layout-tabs" role="tablist" aria-label="Workspace Layout">
+        <button class="layout-tab active" data-layout="cockpit" title="Combined View: Cameras + Spatial + Telemetry + Topics">
+          Cockpit View
+        </button>
+        <button class="layout-tab" data-layout="cameras" title="Expanded Multi-Camera Video Matrix">
+          Cameras Wall
+        </button>
+        <button class="layout-tab" data-layout="telemetry" title="Expanded Synchronized Charts & Spatial View">
+          Charts &amp; 3D
+        </button>
+        <button class="layout-tab" data-layout="topics" title="Full Synchronized All-Topics Inspector">
+          All Topics (<span id="tabTopicsBadge">0</span>)
+        </button>
+      </div>
+
+      <button class="btn btn-primary" id="openBagModalBtn">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        Upload / Open Bag
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Workspace Container -->
+  <main class="workspace layout-cockpit" id="workspaceGrid">
+    <!-- PANEL 1: Multi-Camera Video Streams -->
+    <section class="panel panel-cameras" id="panelCameras">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <h2 class="panel-title">
+            <span class="status-dot status-live"></span>
+            Synchronized Camera Streams
+          </h2>
+          <span class="panel-count" id="activeCamerasCountLabel">0 / 0 active</span>
+        </div>
+
+        <div class="camera-controls-bar">
+          <!-- View Mode Toggle: Single vs Multi -->
+          <div class="segmented-control" id="camModeControl" title="Choose between viewing a single stream or multiple streams simultaneously">
+            <button class="seg-btn" data-mode="single">Single Stream</button>
+            <button class="seg-btn active" data-mode="multi">Multi-Stream</button>
+          </div>
+
+          <!-- Grid Columns Selector -->
+          <label class="toolbar-select-label" id="gridColsWrapper">
+            Grid:
+            <select id="camGridColsSelect" class="toolbar-select">
+              <option value="auto" selected>Auto</option>
+              <option value="1">1 Col</option>
+              <option value="2">2 Cols</option>
+              <option value="3">3 Cols</option>
+              <option value="4">4 Cols</option>
+            </select>
+          </label>
+
+          <!-- Quick Stream Filters -->
+          <div class="btn-group">
+            <button class="btn btn-xs" id="selectAllRgbBtn" title="Select all RGB camera topics">All RGB</button>
+            <button class="btn btn-xs" id="selectAllDepthBtn" title="Select all Depth camera topics">All Depth</button>
+            <button class="btn btn-xs" id="selectAllCamsBtn" title="Select all available camera streams">All</button>
+          </div>
+
+          <!-- Depth Colormap Selector -->
+          <label class="toolbar-select-label" title="Colormap for 16-bit depth camera topics">
+            Depth Map:
+            <select id="depthColormapSelect" class="toolbar-select">
+              <option value="turbo" selected>Turbo</option>
+              <option value="inferno">Inferno</option>
+              <option value="viridis">Viridis</option>
+              <option value="bone">Bone</option>
+              <option value="raw">Grayscale</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <!-- Camera Topic Selector Pills -->
+      <div class="camera-selector-strip" id="cameraSelectorStrip">
+        <!-- Populated dynamically with camera stream checkboxes/pills -->
+      </div>
+
+      <!-- Video Streams Grid -->
+      <div class="camera-grid grid-auto" id="cameraGrid">
+        <div class="empty-state">No camera streams loaded</div>
+      </div>
+    </section>
+
+    <!-- PANEL 2: Spatial 2D / 3D Sensor View (Odometry Trajectory, 3D PointCloud2, 2D LaserScan) -->
+    <section class="panel panel-spatial" id="panelSpatial">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <h2 class="panel-title">Spatial &amp; 3D Sensor View</h2>
+          <div class="spatial-tabs" id="spatialTabs">
+            <button class="spatial-tab active" data-view="trajectory">2D Odometry Map</button>
+            <button class="spatial-tab" data-view="pointcloud" id="tabBtnPointcloud">3D PointCloud2</button>
+            <button class="spatial-tab" data-view="laserscan" id="tabBtnLaserscan">2D LiDAR Scan</button>
+          </div>
+        </div>
+        <div class="spatial-toolbar" id="spatialToolbar">
+          <button class="btn btn-xs" id="resetSpatialViewBtn" title="Reset camera/zoom">Reset View</button>
+        </div>
+      </div>
+
+      <!-- Sub-toolbar for PointCloud camera selection -->
+      <div class="pc-selector-strip hidden" id="pcSelectorStrip">
+        <span class="strip-label">Clouds:</span>
+        <div id="pcTopicPills" class="pc-pills-wrap"></div>
+        <label class="toolbar-select-label">
+          Color:
+          <select id="pcColorModeSelect" class="toolbar-select">
+            <option value="camera" selected>By Camera</option>
+            <option value="depth">By Distance</option>
+            <option value="height">By Z Height</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="spatial-canvas-wrap">
+        <canvas id="spatialCanvas"></canvas>
+        <div class="spatial-hud" id="spatialHud"></div>
+      </div>
+    </section>
+
+    <!-- PANEL 3: Synchronized Time-Series Telemetry Charts -->
+    <section class="panel panel-telemetry" id="panelTelemetry">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <h2 class="panel-title">Synchronized Telemetry Plots</h2>
+          <span class="panel-subtitle">Click or drag on any chart to scrub timeline</span>
+        </div>
+        <div class="telemetry-controls">
+          <div class="segmented-control" id="chartStreamModeControl" title="Full trace with moving cursor vs progressive live drawing">
+            <button class="seg-btn active" data-mode="cursor">Full Trace + Cursor</button>
+            <button class="seg-btn" data-mode="progressive">Progressive Stream</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="charts-grid" id="chartsGrid">
+        <!-- Chart 1: Velocity & Odometry -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <span class="chart-title">Velocity &amp; Commands (m/s, rad/s)</span>
+            <select class="toolbar-select chart-mode-select" id="chart1Select">
+              <option value="odom_vel" selected>Odometry Velocity (vx, vy, wz)</option>
+              <option value="cmd_vel">Commanded Velocity (cmd_vel)</option>
+              <option value="odom_pos">Odometry Position (x, y, z)</option>
+            </select>
+          </div>
+          <div class="chart-canvas-wrap">
+            <canvas id="chartCanvas1"></canvas>
+          </div>
+          <div class="chart-legend" id="chartLegend1"></div>
+        </div>
+
+        <!-- Chart 2: IMU Orientation & Dynamics -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <span class="chart-title">IMU Attitude &amp; Inertial Dynamics</span>
+            <select class="toolbar-select chart-mode-select" id="chart2Select">
+              <option value="imu_euler" selected>Orientation Euler (Roll, Pitch, Yaw °)</option>
+              <option value="imu_acc">Linear Acceleration (ax, ay, az m/s²)</option>
+              <option value="imu_gyro">Angular Velocity (gx, gy, gz rad/s)</option>
+            </select>
+          </div>
+          <div class="chart-canvas-wrap">
+            <canvas id="chartCanvas2"></canvas>
+          </div>
+          <div class="chart-legend" id="chartLegend2"></div>
+        </div>
+
+        <!-- Chart 3: Joints / Encoders / Foot Force -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <span class="chart-title">Actuators, Joints &amp; Robot State</span>
+            <select class="toolbar-select chart-mode-select" id="chart3Select">
+              <option value="joint_pos" selected>Joint Positions (rad)</option>
+              <option value="joint_vel">Joint Velocities (rad/s)</option>
+              <option value="joint_eff">Joint Efforts / Torque (Nm)</option>
+              <option value="foot_force">Go1 Foot Force Est</option>
+              <option value="encoders">Wheel Encoders (SensorState)</option>
+            </select>
+          </div>
+          <div class="chart-canvas-wrap">
+            <canvas id="chartCanvas3"></canvas>
+          </div>
+          <div class="chart-legend" id="chartLegend3"></div>
+        </div>
+
+        <!-- Chart 4: Battery, Temperatures & Magnetic Field -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <span class="chart-title">Power, Thermal &amp; Environment</span>
+            <select class="toolbar-select chart-mode-select" id="chart4Select">
+              <option value="battery" selected>Battery (Voltage V, Current A, %)</option>
+              <option value="temp_joints">Robot Joint Temperatures (°C)</option>
+              <option value="temp_ctrl">Controller &amp; CPU Temperatures (°C)</option>
+              <option value="magnetic">Magnetic Field (x, y, z)</option>
+            </select>
+          </div>
+          <div class="chart-canvas-wrap">
+            <canvas id="chartCanvas4"></canvas>
+          </div>
+          <div class="chart-legend" id="chartLegend4"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANEL 4: All-Topics Synchronized Live Inspector -->
+    <section class="panel panel-topics" id="panelTopics">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <h2 class="panel-title">All Topics Live Sync Inspector</h2>
+          <span class="panel-count" id="inspectorTopicsCount">0 topics</span>
+        </div>
+        <div class="topics-filter-bar">
+          <input
+            type="search"
+            id="topicSearchInput"
+            class="topic-search-input"
+            placeholder="Filter topics by name or type (e.g. imu, camera, temp, odom)..."
+          />
+          <select id="topicCategoryFilter" class="toolbar-select">
+            <option value="all" selected>All Categories</option>
+            <option value="camera">Cameras (RGB &amp; Depth)</option>
+            <option value="spatial">Spatial (PointCloud / Scan / Odom)</option>
+            <option value="control">IMU / CmdVel / Joints</option>
+            <option value="system">Battery / Temp / State / TF</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="topics-inspector-body" id="topicsInspectorList">
+        <!-- Populated dynamically with synchronized live topic rows -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Bottom Master Synchronized Playback Transport Bar -->
+  <footer class="transport-bar">
+    <div class="transport-controls">
+      <button class="transport-btn" id="jumpStartBtn" title="Jump to Start (Home)">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+          <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/>
+        </svg>
+      </button>
+      <button class="transport-btn" id="stepBackBtn" title="Step Backward 50ms (Left Arrow)">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+          <path d="M11 18V6l-8.5 6 8.5 6zm.5-6 8.5 6V6l-8.5 6z"/>
+        </svg>
+      </button>
+      <button class="transport-btn transport-play-btn" id="playPauseBtn" title="Play / Pause Synchronized Stream (Space)">
+        <svg id="playIcon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+        <svg id="pauseIcon" class="hidden" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+          <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+        </svg>
+        <span id="playBtnLabel">Play</span>
+      </button>
+      <button class="transport-btn" id="stepFwdBtn" title="Step Forward 50ms (Right Arrow)">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+          <path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Timeline Scrubber -->
+    <div class="timeline-container">
+      <div class="timeline-time-readout">
+        <span class="time-current" id="currentTimeDisplay">00.000s</span>
+        <span class="time-slash">/</span>
+        <span class="time-total" id="totalTimeDisplay">00.000s</span>
+      </div>
+
+      <div class="timeline-track-wrapper" id="timelineTrackWrapper">
+        <input
+          type="range"
+          id="timelineSlider"
+          class="timeline-slider"
+          min="0"
+          max="10"
+          step="0.005"
+          value="0"
+        />
+        <div class="timeline-progress-fill" id="timelineProgressFill"></div>
+        <div class="timeline-events-layer" id="timelineEventsLayer"></div>
+      </div>
+
+      <div class="timeline-epoch-readout" id="epochTimeDisplay" title="Recorded Timestamp">
+        --:--:--.---
+      </div>
+    </div>
+
+    <!-- Speed & Loop Options -->
+    <div class="transport-options">
+      <label class="toolbar-select-label" title="Playback Speed Multiplier">
+        Speed:
+        <select id="playbackSpeedSelect" class="toolbar-select">
+          <option value="0.25">0.25x</option>
+          <option value="0.5">0.5x</option>
+          <option value="1" selected>1.0x</option>
+          <option value="2">2.0x</option>
+          <option value="4">4.0x</option>
+        </select>
+      </label>
+
+      <button class="btn btn-xs btn-toggle active" id="loopToggleBtn" title="Loop playback when reaching the end">
+        Loop: ON
+      </button>
+    </div>
+  </footer>
+
+  <!-- Upload / Open Bag Modal -->
+  <div class="modal-backdrop hidden" id="bagModalBackdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Upload or Select a ROS 2 Bag</h3>
+          <p class="modal-subtitle">Upload a <code>.db3</code> file or bag folder from your computer, or open a discovered robot bag.</p>
+        </div>
+        <button class="modal-close-btn" id="closeBagModalBtn" title="Close">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Section 1: Upload from Browser (File or Folder) -->
+        <div class="upload-zone" id="uploadDropZone">
+          <div class="upload-icon">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <div class="upload-title">Drag &amp; drop a ROS 2 <code>.db3</code> file or bag folder here</div>
+          <div class="upload-hint">Supports Unitree Go1, TurtleBot3, and any ROS 2 SQLite3 (<code>.db3</code>) recording</div>
+          <div class="upload-buttons-row">
+            <label class="btn btn-primary">
+              Select .db3 File(s)
+              <input type="file" id="uploadDb3Input" accept=".db3" multiple hidden />
+            </label>
+            <label class="btn btn-secondary">
+              Select Bag Folder
+              <input type="file" id="uploadFolderInput" webkitdirectory directory multiple hidden />
+            </label>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="upload-progress-wrap hidden" id="uploadProgressWrap">
+            <div class="upload-progress-bar">
+              <div class="upload-progress-fill" id="uploadProgressFill"></div>
+            </div>
+            <div class="upload-progress-text" id="uploadProgressText">Uploading...</div>
+          </div>
+        </div>
+
+        <!-- Section 2: Load by Server Path -->
+        <div class="path-load-section">
+          <label class="section-label" for="customBagPathInput">Or load directly by local folder / <code>.db3</code> path:</label>
+          <div class="path-input-row">
+            <input
+              type="text"
+              id="customBagPathInput"
+              class="path-text-input"
+              placeholder="/home/fsti/ROS/Go1_Project/Bags/go1_bags/20261023_203018_go1_navigation_capture"
+            />
+            <button class="btn btn-primary" id="loadCustomPathBtn">Load Path</button>
+          </div>
+        </div>
+
+        <!-- Section 3: Discovered Bags List -->
+        <div class="discovered-bags-section">
+          <div class="section-label">Discovered Robot Bags on System:</div>
+          <div class="discovered-bags-grid" id="discoveredBagsList">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
