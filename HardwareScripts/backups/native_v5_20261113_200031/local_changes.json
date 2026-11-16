@@ -1,0 +1,26 @@
+[
+  {
+    "path": "/home/fsti/ROS/Go1_Project/NavigationScripts/nav_and_collect_v5.py",
+    "backup": "/home/fsti/ROS/Go1_Project/HardwareScripts/backups/native_v5_20261113_200031/0_nav_and_collect_v5.py"
+  },
+  {
+    "path": "/home/fsti/ROS/Go1_Project/cmds.md",
+    "backup": "/home/fsti/ROS/Go1_Project/HardwareScripts/backups/native_v5_20261113_200031/1_cmds.md"
+  },
+  {
+    "path": "/home/fsti/ROS/Go1_Project/HardwareScripts/start_pi.sh",
+    "backup": "/home/fsti/ROS/Go1_Project/HardwareScripts/backups/native_v5_20261113_200031/2_start_pi.sh"
+  },
+  {
+    "path": "/home/fsti/ROS/Go1_Project/HardwareScripts/start_13.sh",
+    "backup": "/home/fsti/ROS/Go1_Project/HardwareScripts/backups/native_v5_20261113_200031/3_start_13.sh"
+  },
+  {
+    "path": "/home/fsti/ROS/Go1_Project/HardwareScripts/start_14.sh",
+    "backup": "/home/fsti/ROS/Go1_Project/HardwareScripts/backups/native_v5_20261113_200031/4_start_14.sh"
+  },
+  {
+    "path": "/home/fsti/ROS/Go1_Project/HardwareScripts/start_15.sh",
+    "backup": "/home/fsti/ROS/Go1_Project/HardwareScripts/backups/native_v5_20261113_200031/5_start_15.sh"
+  }
+]

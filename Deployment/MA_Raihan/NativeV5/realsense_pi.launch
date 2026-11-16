@@ -1,0 +1,19 @@
+<launch>
+  <!-- Record original raw images locally; avoid duplicate lossy/Theora encoders. -->
+  <rosparam param="/camera/color/image_raw/disable_pub_plugins">[image_transport/compressed, image_transport/compressedDepth, image_transport/theora]</rosparam>
+  <rosparam param="/camera/depth/image_rect_raw/disable_pub_plugins">[image_transport/compressed, image_transport/compressedDepth, image_transport/theora]</rosparam>
+  <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+    <arg name="camera" value="camera"/>
+    <arg name="device_type" value="d455"/>
+    <arg name="color_width" value="640"/><arg name="color_height" value="480"/><arg name="color_fps" value="30"/>
+    <arg name="depth_width" value="640"/><arg name="depth_height" value="480"/><arg name="depth_fps" value="15"/>
+    <arg name="enable_color" value="true"/><arg name="enable_depth" value="true"/>
+    <arg name="enable_gyro" value="true"/><arg name="gyro_fps" value="200"/>
+    <arg name="enable_accel" value="true"/><arg name="accel_fps" value="100"/>
+    <arg name="enable_infra1" value="false"/><arg name="enable_infra2" value="false"/>
+    <arg name="enable_pointcloud" value="false"/><arg name="align_depth" value="false"/>
+    <arg name="enable_sync" value="false"/>
+    <arg name="publish_tf" value="true"/>
+    <arg name="wait_for_device_timeout" value="10.0"/>
+  </include>
+</launch>
